@@ -4,6 +4,7 @@ import (
 	mustache "github.com/Flaque/thaum/thaum/mustache"
 	output "github.com/Flaque/thaum/thaum/output"
 	util "github.com/Flaque/thaum/thaum/util"
+	modifiers "github.com/Flaque/thaum/thaum/modifiers"
 	"github.com/spf13/afero"
 	"os"
 )
@@ -27,9 +28,14 @@ type TemplateFile struct {
 // Updates the TemplateFiles inside the template
 func (t Template) Update() Template {
 	for i, f := range t.Files {
-		for name := range t.Variables {
-			f.variables[name] = t.Variables[name] // Set value
-			t.Files[i] = f
+        for name := range f.variables {
+            if modifiers.VariableHasModifier(name) {
+            	value := t.Variables[modifiers.GetKey(name)]
+                f.variables[name] = modifiers.ApplyModifier(name, value)
+            } else {
+                f.variables[name] = t.Variables[name] // Set value
+            }
+            t.Files[i] = f
 		}
 	}
 	return t

@@ -29,7 +29,7 @@ func getKeys(m map[string]bool) []string {
 func FindVariables(content string) []string {
 	variables := make(map[string]bool)
 
-	re := regexp.MustCompile("({{)[A-Za-z]*(}})") // matches {{blah}} types
+	re := regexp.MustCompile("({{)[A-Za-z ]*(}})") // matches {{blah}} or {{blah mod}} types
 	matches := re.FindAllString(content, -1)
 	for _, match := range matches {
 		match := strings.TrimPrefix(match, "{{")
